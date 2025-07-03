@@ -52,5 +52,7 @@ E as sintaxes usadas no html (Funciona igualzinho o python. Lembre-se que os nom
 
 Ex:
 render_templates('index.html', nome="Arthur")
+
 ![Jinja if](Imagens%20Usadas/Jinja if.png)
+
 ![Jinja For](Imagens%20Usadas/Jinja For.png)
