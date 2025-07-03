@@ -3,3 +3,6 @@ Banquinho é um repositório criado para salvar todos que passam sufoco para est
 
 ## Como adicionar conteúdos
 [Em breve um tutorial de como fazer fork e pull requests]
+
+## Links Úteis
+[Fazendo Fork e Pull Request de um repositório](https://www.youtube.com/watch?v=n_GEGPuNNRA)
