@@ -23,6 +23,7 @@ Banquinho é um repositório criado para salvar todos que passam sufoco para est
 * [Criação de ambientes virtuais](wikis/ambientesvirtuais.md)
 * [Extensões que podem ser úteis](wikis/extensoes.md)
 * [Como inserir flask-flash na aplicação](wikis/flask-flash.md)
+* [Tutorial de flask-login](wikis/flask-login.md)
 
 ## Links Úteis
 * [Fazendo Fork e Pull Request de um repositório](https://www.youtube.com/watch?v=n_GEGPuNNRA)
