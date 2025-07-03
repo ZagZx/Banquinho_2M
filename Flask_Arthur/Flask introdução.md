@@ -1,6 +1,6 @@
 # Básico sobre path, rotas...
-![Flask introdução](Imagens%20Usadas/Flask introdução.png)
-![URL](Imagens%20Usadas/URL.png)
+[Flask introdução](Imagens%20Usadas/Flask introdução.png)
+[URL](Imagens%20Usadas/URL.png)
 
 # Request.form
 request.form["variável"] irá sempre buscar se há algum dado correspondente a variável.
@@ -53,6 +53,6 @@ E as sintaxes usadas no html (Funciona igualzinho o python. Lembre-se que os nom
 Ex:
 render_templates('index.html', nome="Arthur")
 
-![Jinja if](Imagens%20Usadas/Jinja if.png)
+[Jinja if](Imagens%20Usadas/Jinja if.png)
 
-![Jinja For](Imagens%20Usadas/Jinja For.png)
+[Jinja For](Imagens%20Usadas/Jinja For.png)
