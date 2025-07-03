@@ -1,12 +1,6 @@
----
-tags: 
-título: 
-backlink:
----
-
 # Básico sobre path, rotas...
-![[Flask introdução.png]]
-![[URL.png]]
+![Flask introdução](Flask introdução.png)
+![URL](URL.png)
 
 # Request.form
 request.form["variável"] irá sempre buscar se há algum dado correspondente a variável.
@@ -43,7 +37,7 @@ request.cookies.get('nome')
 request.cookies.get('genero')
 
 # Url_for
-![[URL_for.png]]
+![URL_for](URL_for.png)
 Url_for irá sempre procurar a função Flask que você está pedindo e substituir pela rota (url path) dela:
 
 Ex: 
@@ -58,5 +52,5 @@ E as sintaxes usadas no html (Funciona igualzinho o python. Lembre-se que os nom
 
 Ex:
 render_templates('index.html', nome="Arthur")
-![[Jinja if.png]]
-![[Jinja For.png]]
+![Jinja if](Jinja if.png)
+![Jinja For](Jinja For.png)
