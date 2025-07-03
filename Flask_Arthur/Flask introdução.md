@@ -1,5 +1,5 @@
 # Básico sobre path, rotas...
-![Flask introdução](Imagens Usadas/Flask introdução.png)
+![Flask introdução]("Imagens Usadas"/Flask introdução.png)
 ![URL](Imagens Usadas/URL.png)
 
 # Request.form
