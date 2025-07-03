@@ -3,6 +3,11 @@ Banquinho é um repositório criado para salvar todos que passam sufoco para est
 
 ## Como adicionar conteúdos
 [Em breve um tutorial de como fazer fork e pull requests]
+### Como posso clonar esse repositório?
+Para clonar este repositório, basta digitar na linha de comando do seu terminal:
+```git
+git clone https://github.com/livialop/Banquinho.git
+```
 
 ## Tutoriais 
 * [Criação de ambientes virtuais](wikis/ambientesvirtuais.md)
