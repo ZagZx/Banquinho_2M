@@ -25,6 +25,9 @@ Banquinho é um repositório criado para salvar todos que passam sufoco para est
 * [Como inserir flask-flash na aplicação](wikis/flask-flash.md)
 * [Tutorial de flask-login](wikis/flask-login.md)
 
+## Códigos
+* [Código flask-login -> Arthur](codigos/flask-login/)
+
 ## Links Úteis
 * [Fazendo Fork e Pull Request de um repositório](https://www.youtube.com/watch?v=n_GEGPuNNRA)
 
