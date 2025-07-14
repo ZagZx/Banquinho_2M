@@ -106,7 +106,7 @@ where nome like 'palavra'
 | ------------- | ------------------------------------------------------------- |
 | Like 'a%'     | Encontra todos os valores que começarem com a                 |
 | Like '%a'     | Encontra todos os valores que terminarem com a                |
-| Like '%Maria' | Encontra todos os valores que tiverem Maria em qualquer lugar |
+| Like '%Maria%' | Encontra todos os valores que tiverem Maria em qualquer lugar |
 
 
 
