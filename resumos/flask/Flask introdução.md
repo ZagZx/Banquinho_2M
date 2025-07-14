@@ -1,7 +1,7 @@
 # Básico sobre path, rotas...
-![Flask introdução](Imagens%20Usadas/Flask%20introdução.png)
+![Flask introdução](../../imagens/Flask%20introdução.png)
 
-![URL](Imagens%20Usadas/URL.png)
+![URL](../../imagens/URL.png)
 
 # Request.form
 request.form["variável"] irá sempre buscar se há algum dado correspondente a variável.
@@ -38,7 +38,7 @@ request.cookies.get('nome')
 request.cookies.get('genero')
 
 # Url_for
-![URL_for](Imagens%20Usadas/URL%20for.png)
+![URL_for](../../imagens/URL_for.png)
 Url_for irá sempre procurar a função Flask que você está pedindo e substituir pela rota (url path) dela:
 
 Ex: 
@@ -46,7 +46,7 @@ Ex:
 def index():
     return render_template('index.html')    
 
-o url_for teria que ser {{ url_for('index') }} e o href ficaria href="/"
+O url_for teria que ser {{ url_for('index') }} e o href ficaria href="/"
 
 # Sintaxe Jinja para o html
 E as sintaxes usadas no html (Funciona igualzinho o python. Lembre-se que os nomes que você colocará são baseados nos nomes que você coloca no render template ou no set_cookies.
@@ -54,6 +54,6 @@ E as sintaxes usadas no html (Funciona igualzinho o python. Lembre-se que os nom
 Ex:
 render_templates('index.html', nome="Arthur")
 
-![Jinja if](Imagens%20Usadas/Jinja%20if.png)
+![Jinja if](../../imagens/Jinja%20if.png)
 
-![Jinja For](Imagens%20Usadas/Jinja%20For.png)
+![Jinja For](../../imagens/Jinja%20For.png)
