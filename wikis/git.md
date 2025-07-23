@@ -29,6 +29,22 @@ git config --global user.name "Seu Nome"
 git config --global user.email "seuemail@exemplo.com" 
 ```
 
+#### 2. Inicialize seu primeiro repositório **(OPCIONAL)**
+Esse passo não é necessário para poder utilizar o Git. Ele é apenas uma recomendação para saber como criar seu primeiro repositório com o Git. Caso você não deseje fazer essa etapa, não tem problemas e não será prejudicado por isso.
+
+Agora, seguindo o tutorial:
+1. No diretório onde você está localizado, crie uma pasta para o seu projeto.
+```
+mkdir MeuProjeto
+cd MeuProjeto/
+```
+2. Agora, localizado dentro do diretório do seu projeto, para inicializar o repositório, digite no terminal:
+```git
+git init
+```
+Parabéns! Você tem o seu primeiro repositório :D.
+
+
 
 ## Baixando e instalando a ferramenta Git
 ### Windows
@@ -45,5 +61,8 @@ git config --global user.email "seuemail@exemplo.com"
 ### MacOS
 1. O Git pode ser instalado a partir do XCode Command Line Tools.
 2. Abra o terminal e digite `git --version`. Caso ele não estiver disponível, o próprio sistema solicitará a instalação e basta seguir as instruções.
+
+> [!NOTE]
+> Caso você possua o Homebrew já instalado no seu Mac e queira instalar o Git a partir dele, digite no terminal: `brew install git`
 
 ## Conceitos do Git
