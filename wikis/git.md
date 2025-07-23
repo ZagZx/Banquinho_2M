@@ -11,7 +11,7 @@ O Git surge para resolver esse problema, tornando possível que duas ou mais pes
 Cada vez que uma nova versão do projeto é feita, o usuário precisa dar um ```commit``` nas alterações feitas, que nada mais é do que **postar** o arquivo com o que foi modificado. Adiante, estará disponível para leitura o passo a passo de como usar o Git sem nunca ter mexido na ferramenta e o que significa seus conceitos básicos.
 
 > [!IMPORTANT]
-> Antes de prosseguir, certifique-se de que o Git está instalado na sua máquina. Caso não tenha instalado, clique [aqui](#instalando-a-ferramenta-git).
+> Antes de prosseguir, certifique-se de que o Git está instalado na sua máquina. Caso não tenha instalado, clique [aqui](#baixando-e-instalando-a-ferramenta-git).
 
 > [!NOTE]
 > Tem dúvidas com os conceitos que estão sendo utilizados? Clique [aqui](#conceitos-do-git) para melhor explicação.
@@ -44,6 +44,6 @@ git config --global user.email "seuemail@exemplo.com"
 
 ### MacOS
 1. O Git pode ser instalado a partir do XCode Command Line Tools.
-2. Abra o terminal e digite ```git --version```. Caso ele não estiver disponível, o próprio sistema solicitará a instalação e basta seguir as instruções.
+2. Abra o terminal e digite `git --version`. Caso ele não estiver disponível, o próprio sistema solicitará a instalação e basta seguir as instruções.
 
 ## Conceitos do Git
