@@ -40,7 +40,8 @@ app = Flask(__name__)
 app.secret_key = '<CHAVE SECRETA>'
 app.config['SECRET_KEY'] = '<CHAVE SECRETA>'
 
-login_manager = LoginManager(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
 ```
 
 O gerenciador de login (`LoginManager`) contém o código que permite que seu aplicativo e o Flask-Login trabalhem juntos, como carregar um usuário a partir de um ID, para onde enviar os usuários quando eles precisam fazer login e coisas do tipo.
