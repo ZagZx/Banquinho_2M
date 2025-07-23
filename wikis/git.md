@@ -44,7 +44,52 @@ git init
 ```
 Parabéns! Você tem o seu primeiro repositório :D.
 
+## Utilizando o Git
+Com o git já configurado, vamos entender agora como usar essa ferramenta para o versionamento de código em projetos pessoais e em equipes.
 
+### 1. Clonar repositórios
+Para copiar na sua máquina o repositório de outras pessoas, entre no repositório e copie o link HTTPS dele. 
+
+(imagens de como faz isso)
+
+Após isso, acesse o diretório onde você deseja hospedar o repositório e digite no terminal:
+```git
+git clone https://link-do-repositorio.git
+```
+
+### 2. Fiz várias alterações, como ver o que foi mudado?
+Se você criou, deletou e/ou modificou arquivos e pastas, confira o que foi alterado até o momento usando o comando `git status` no terminal. Esse comando não irá fazer nada, apenas serve para visualização do conteúdo.
+(imagem mostrando)
+
+### 3. Commits
+#### 3.1 O que é um commit?
+Vamos entender primeiro o que é um commit e depois abordaremos os passos para realizar o seu primeiro commit. 
+
+Fazer um commit é salvar as alterações que você fez em arquivo(s) em relação aos commits anteriores. Digamos que você está fazendo um projeto grande e a equipe não está salvando as mudanças que estão sendo feitas no código e de repente (😱!) ele para de funcionar. Ninguém teria controle e respostas para dizer o que fez o código quebrar e fazer ele retornar para um ponto onde estava funcionando corretamente.
+
+O commit permite que você salve "versões" do seu código sempre que você altera e faz um commit, abrindo a possibilidade de sempre visualizar ou retornar a um ponto anterior.
+
+#### 3.2 Commits
+Para fazer o commit com os arquivos alterados, primeiro é necessário adicionar esses arquivos para a "lista de commit". Digite o comando no terminal do seu repositório:
+```git
+git add .
+```
+Isso fará com que tudo que foi alterado seja adicionado e pronto para dar commit. Agora o commit:
+
+```git
+git commit -m "digite aqui sua mensagem de commit"
+```
+A opção `-m` que vem após serve para que você possa digitar o que foi alterado para que aquele commit esteja sendo feito.
+
+### 4. Push
+Agora que você fez o commit, as alterações ainda não estão disponíveis no Github. Para fazer com que elas venham para o Github, você precisa dar um pequeno *empurrão* nela. Utilize o comando:
+```git
+git push 
+```
+Isso fará com que as mudanças subam para o seu repositório no Github.
+
+> [!NOTE]
+> De modo geral, o `git add .`, `git commit` e `git push` são utilizados seguidos um do outro.
 
 ## Baixando e instalando a ferramenta Git
 ### Windows
