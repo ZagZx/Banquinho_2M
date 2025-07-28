@@ -1,5 +1,5 @@
 # Git
-<div style='display:flex; justify-content:center; width: 50%; height: 50%;'>
+<div style='display:flex; justify-content:center; width: 30%;'>
     <img src='../imagens/git.png'>
 </div>
 
