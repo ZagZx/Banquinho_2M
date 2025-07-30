@@ -62,7 +62,9 @@ git clone https://link-do-repositorio.git
 
 ### 2. Fiz várias alterações, como ver o que foi mudado?
 Se você criou, deletou e/ou modificou arquivos e pastas, confira o que foi alterado até o momento usando o comando `git status` no terminal. Esse comando não irá fazer nada, apenas serve para visualização do conteúdo.
-(imagem mostrando)
+
+![gitstatus](../imagens/gitstatus.gif)
+
 
 ### 3. Commits
 #### 3.1 O que é um commit?
