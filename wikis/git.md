@@ -50,7 +50,10 @@ Com o git já configurado, vamos entender agora como usar essa ferramenta para o
 ### 1. Clonar repositórios
 Para copiar na sua máquina o repositório de outras pessoas, entre no repositório e copie o link HTTPS dele. 
 
-(imagens de como faz isso)
+<p style='color: green;'>> Como fazer o git clone:</p>
+
+![HowToGitClone](../imagens/gitclone.gif)
+
 
 Após isso, acesse o diretório onde você deseja hospedar o repositório e digite no terminal:
 ```git
