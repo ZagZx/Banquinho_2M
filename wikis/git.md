@@ -94,6 +94,34 @@ Isso fará com que as mudanças subam para o seu repositório no Github.
 > [!NOTE]
 > De modo geral, o `git add .`, `git commit` e `git push` são utilizados seguidos um do outro.
 
+### 4. Conflitos e merge
+Como dito anteriormente, o Git é uma ferramenta para versionamento de código/arquivo. Quando duas ou mais pessoas estão alterando simultaneamente uma mesma parte de um projeto, pode acontecer conflitos no código. Mas calma! A existência de um conflito não é algo para se desesperar, pois isso acontece toda hora. 
+
+
+
+1. Quando o Git detectar um conflito, ele irá marcar no código as diferenças:
+```
+<<<<<<< HEAD
+seu código
+=======
+código de outra pessoa
+>>>>>>> branch-name
+```
+
+2. Escolha qual versão você quer manter:
+    - Mantenha o código que você quer entre os marcadores
+
+3. Após resolver os conflitos, adicione as mudanças:
+```git
+git add .
+git commit -m "Descrição do que foi resolvido no conflito"
+git push
+```
+
+> [!TIP]
+> O VSCode oferece botões "Accept Current Change", "Accept Incoming Change" ou "Accept Both Changes" para resolver conflitos mais facilmente no *Source Control*.
+
+
 ## Baixando e instalando a ferramenta Git
 ### Windows
 1. Acesse a página do Git para baixar a ferramenta no Windows "https://git-scm.com/downloads/win".
