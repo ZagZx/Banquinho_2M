@@ -3,9 +3,8 @@
     <img src='../imagens/git.png'>
 </div>
 
----
-title: Sumário
----
+
+## Sumário
 Caso deseje, clique em qualquer um dos tópicos para ser redirecionado a ele.
 * [O que é Git?](#o-que-é-git)
 * [Configurando o Git](#configurando-o-git)
