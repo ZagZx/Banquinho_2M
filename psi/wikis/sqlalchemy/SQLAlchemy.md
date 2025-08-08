@@ -279,7 +279,6 @@ Para fazer uma consulta ou "select" no banco há mais de uma forma, afinal a con
 
     Nesse exemplo a variável `usuario` conterá apenas o usuário com o nome igual a "Fulano".
 
-    > [!NOTE]
     > O método `first()` retorna o primeiro resultado da consulta.
 
 - Selecionar pelo ID [`select * from usuario where id = 1`]:
