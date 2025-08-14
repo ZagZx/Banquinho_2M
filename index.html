@@ -1,14 +1,172 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <link rel="stylesheet" href="static/style/main.css">
+  <meta charset="UTF-8">
+  <title>Tutorial Banquinho</title>
+
+  <!-- Biblioteca Markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <!-- Biblioteca para realce de código -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background-color: #f5f7fa;
+      padding: 40px 20px;
+      line-height: 1.6;
+    }
+
+    #divo {
+      background: white;
+      max-width: 800px;
+      margin: auto;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    pre {
+      overflow-x: auto;
+      border-radius: 6px;
+    }
+
+    code {
+      font-family: 'Courier New', monospace;
+    }
+
+.note, .warning, .tip, .important {
+  padding: 1em 1em 1em 3.2em;
+  border-radius: 5px;
+  margin: 1.5em 0;
+  white-space: pre-wrap;
+  position: relative;
+  font-size: 1rem;
+}
+
+.note::before,
+.warning::before,
+.tip::before,
+.important::before {
+  position: absolute;
+  left: 1em;
+  top: 1em;
+  font-size: 1.2em;
+}
+
+.note {
+  background-color: #eaf4ff;
+  border-left: 5px solid #1d7af3;
+}
+.note::before {
+  content: "ℹ️";
+}
+
+.important {
+  background-color: #ffe6e6;
+  border-left: 5px solid #d63333;
+}
+.important::before {
+  content: "❗";
+}
+
+.warning {
+  background-color: #fff3cd;
+  border-left: 5px solid #ffc107;
+}
+.warning::before {
+  content: "⚠️";
+}
+
+.tip {
+  background-color: #d4edda;
+  border-left: 5px solid #28a745;
+}
+.tip::before {
+  content: "💡";
+}
+
+  </style>
 </head>
 <body>
-    <h1>teste</h1>
-    <script src="static/script/main.js"></script>
+
+  <div id="divo">Carregando conteúdo...</div>
+
+  <script>
+    // Função que busca conteúdo .md do GitHub e decodifica corretamente
+    async function getTutorial(path) {
+      try {
+        const res = await fetch(`https://api.github.com/repos/livialop/banquinho/contents/${path}`);
+        if (!res.ok) throw new Error(`Erro ao buscar arquivo: ${res.status}`);
+
+        const data = await res.json();
+
+        // Decodifica corretamente como UTF-8
+        const decodedBytes = Uint8Array.from(atob(data.content), c => c.charCodeAt(0));
+        const decoded = new TextDecoder("utf-8").decode(decodedBytes);
+
+        return decoded;
+      } catch (err) {
+        console.error(err);
+        return `Erro ao carregar o conteúdo: ${err.message}`;
+      }
+    }
+
+    // Função para transformar blocos [!NOTE] etc. em <div class="...">
+    function tratarBlocosEspeciais(markdown) {
+      // Blocos de linha única
+      markdown = markdown.replace(/^\[!NOTE\][ \t]*(.+)$/gm, '<div class="note">$1</div>');
+      markdown = markdown.replace(/^\[!TIP\][ \t]*(.+)$/gm, '<div class="tip">$1</div>');
+      markdown = markdown.replace(/^\[!WARNING\][ \t]*(.+)$/gm, '<div class="warning">$1</div>');
+      markdown = markdown.replace(/^\[!IMPORTANT\][ \t]*(.+)$/gm, '<div class="important">$1</div>');
+
+      // Blocos de várias linhas
+      markdown = markdown.replace(/\[!NOTE\][ \t]*\n([\s\S]*?)(?=\n{2,}|$)/g, '<div class="note">$1</div>\n');
+      markdown = markdown.replace(/\[!TIP\][ \t]*\n([\s\S]*?)(?=\n{2,}|$)/g, '<div class="tip">$1</div>\n');
+      markdown = markdown.replace(/\[!WARNING\][ \t]*\n([\s\S]*?)(?=\n{2,}|$)/g, '<div class="warning">$1</div>\n');
+      markdown = markdown.replace(/\[!IMPORTANT\][ \t]*\n([\s\S]*?)(?=\n{2,}|$)/g, '<div class="important">$1</div>\n');
+
+      return markdown;
+    }
+
+    // Função que carrega e exibe o conteúdo na tela
+    async function renderTutorial() {
+      let markdown = await getTutorial("psi/codigos/flask-login/app.py");
+
+      // Substituir blocos especiais
+      markdown = tratarBlocosEspeciais(markdown);
+
+      // Converter para HTML com destaque de código
+      const html = marked.parse(markdown, {
+        highlight: function(code, lang) {
+          const validLang = hljs.getLanguage(lang) ? lang : 'plaintext';
+          return hljs.highlight(code, { language: validLang }).value;
+        }
+      });
+
+      document.getElementById('divo').innerHTML = html;
+      // Adiciona rótulos como o GitHub faz
+document.querySelectorAll('.note').forEach(el => {
+  el.insertAdjacentHTML('afterbegin', '<strong style="display:block; margin-bottom:0.5em;">Note</strong>');
+});
+document.querySelectorAll('.important').forEach(el => {
+  el.insertAdjacentHTML('afterbegin', '<strong style="display:block; margin-bottom:0.5em;">Importante</strong>');
+});
+document.querySelectorAll('.tip').forEach(el => {
+  el.insertAdjacentHTML('afterbegin', '<strong style="display:block; margin-bottom:0.5em;">Dica</strong>');
+});
+document.querySelectorAll('.warning').forEach(el => {
+  el.insertAdjacentHTML('afterbegin', '<strong style="display:block; margin-bottom:0.5em;">Atenção</strong>');
+});
+
+      hljs.highlightAll();
+    }
+
+    renderTutorial();
+  </script>
 
 </body>
 </html>
