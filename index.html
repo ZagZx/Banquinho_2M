@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Explorador do Repositório livialop/banquinho</title>
+  <title>Explorador de Arquivos – banquinho</title>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
@@ -34,23 +34,21 @@
   <ul id="file-list"></ul>
 
   <script>
-    // MUDANÇA CRUCIAL: Armazenaremos o "mapa" do repositório aqui
     let repoManifest = [];
 
-    // REESCRITO: Função para listar arquivos usando o manifesto local
     function listFiles(path = "") {
       const container = document.getElementById("file-list");
       const viewer = document.getElementById("viewer");
       container.innerHTML = "";
       viewer.innerHTML = "";
 
-      // Botão de voltar
       if (path !== "") {
         const upPath = path.split("/").slice(0, -1).join("/");
         const li = document.createElement("li");
         const a = document.createElement("a");
         a.textContent = "⬅ Voltar";
-        a.href = `#/${upPath}`;
+        // CORREÇÃO: Codifica o caminho para o link de "Voltar"
+        a.href = `#/${encodeURIComponent(upPath)}`;
         li.appendChild(a);
         container.appendChild(li);
       }
@@ -59,10 +57,8 @@
       
       const items = repoManifest.filter(item => {
         if (path === "") {
-          // No diretório raiz, queremos itens sem "/" no caminho
           return !item.path.includes("/");
         }
-        // Em subdiretórios, queremos itens que começam com o caminho e têm o nível de profundidade correto
         return item.path.startsWith(path + "/") && item.path.split("/").length === depth + 1;
       });
 
@@ -71,48 +67,107 @@
         const a = document.createElement("a");
         const itemName = item.path.split("/").pop();
         a.textContent = item.type === "dir" ? "📁 " + itemName : "📄 " + itemName;
-        a.href = `#/${item.path}`;
+        // CORREÇÃO: Codifica o caminho para o link do item
+        a.href = `#/${encodeURIComponent(item.path)}`;
         li.appendChild(a);
         container.appendChild(li);
       });
     }
 
-    // REESCRITO: Função para ver arquivos buscando localmente
     async function viewFile(path) {
-      // Usa fetch com caminho relativo! Sem API.
-      const response = await fetch(path);
+      // CORREÇÃO: Codifica o caminho para a chamada fetch funcionar com espaços
+      const encodedPath = path.split('/').map(encodeURIComponent).join('/');
+      const response = await fetch(encodedPath);
       const text = await response.text();
 
       const viewer = document.getElementById("viewer");
       const container = document.getElementById("file-list");
       container.innerHTML = "";
 
-      const ext = path.split(".").pop();
+      const ext = path.split(".").pop().toLowerCase();
 
-      if (ext === "md") {
+      // CORREÇÃO: Verifica múltiplas extensões de texto e markdown
+      if (['md', 'markdown', 'txt'].includes(ext)) {
         renderMarkdown(text, path);
       } else {
         renderCode(text, path, ext);
       }
     }
     
-    // As funções renderCode, renderMarkdown, tratarBlocosEspeciais, e escapeHtml
-    // continuam exatamente as mesmas. Não precisam de alteração.
-    function renderCode(text, path, ext) { /* ...código original... */ }
-    function renderMarkdown(markdown, path) { /* ...código original... */ }
-    function tratarBlocosEspeciais(markdown) { /* ...código original... */ }
-    function escapeHtml(unsafe) { /* ...código original... */ }
+    // CORREÇÃO: Funções de renderização completas
+    function renderCode(text, path, ext) {
+      let lang = "";
+      if (["py"].includes(ext)) lang = "python";
+      else if (["js"].includes(ext)) lang = "javascript";
+      else if (["html", "htm"].includes(ext)) lang = "html";
+      else if (["css"].includes(ext)) lang = "css";
+      else lang = "plaintext";
 
-    // REESCRITO: O roteador agora decide o que fazer com base no manifesto
+      const viewer = document.getElementById("viewer");
+      viewer.innerHTML = `<h2>${path}</h2><pre><code class="language-${lang}">${escapeHtml(text)}</code></pre>`;
+      hljs.highlightAll();
+    }
+
+    function renderMarkdown(markdown, path) {
+      markdown = tratarBlocosEspeciais(markdown);
+      const html = marked.parse(markdown, {
+        highlight: function(code, lang) {
+          const validLang = hljs.getLanguage(lang) ? lang : 'plaintext';
+          return hljs.highlight(code, { language: validLang }).value;
+        }
+      });
+
+      const viewer = document.getElementById("viewer");
+      viewer.innerHTML = `<h2>${path}</h2>${html}`;
+
+      // Adiciona títulos aos blocos especiais
+      document.querySelectorAll('.note').forEach(el => {
+        el.insertAdjacentHTML('afterbegin', '<strong style="display:block; margin-bottom:0.5em;">Nota</strong>');
+      });
+      document.querySelectorAll('.important').forEach(el => {
+        el.insertAdjacentHTML('afterbegin', '<strong style="display:block; margin-bottom:0.5em;">Importante</strong>');
+      });
+      document.querySelectorAll('.tip').forEach(el => {
+        el.insertAdjacentHTML('afterbegin', '<strong style="display:block; margin-bottom:0.5em;">Dica</strong>');
+      });
+      document.querySelectorAll('.warning').forEach(el => {
+        el.insertAdjacentHTML('afterbegin', '<strong style="display:block; margin-bottom:0.5em;">Atenção</strong>');
+      });
+    }
+
+    function tratarBlocosEspeciais(markdown) {
+      markdown = markdown.replace(/^\[!NOTE\][ \t]*(.+)$/gm, '<div class="note">$1</div>');
+      markdown = markdown.replace(/^\[!TIP\][ \t]*(.+)$/gm, '<div class="tip">$1</div>');
+      markdown = markdown.replace(/^\[!WARNING\][ \t]*(.+)$/gm, '<div class="warning">$1</div>');
+      markdown = markdown.replace(/^\[!IMPORTANT\][ \t]*(.+)$/gm, '<div class="important">$1</div>');
+
+      markdown = markdown.replace(/\[!NOTE\][ \t]*\n([\s\S]*?)(?=\n{2,}|$)/g, '<div class="note">$1</div>\n');
+      markdown = markdown.replace(/\[!TIP\][ \t]*\n([\s\S]*?)(?=\n{2,}|$)/g, '<div class="tip">$1</div>\n');
+      markdown = markdown.replace(/\[!WARNING\][ \t]*\n([\s\S]*?)(?=\n{2,}|$)/g, '<div class="warning">$1</div>\n');
+      markdown = markdown.replace(/\[!IMPORTANT\][ \t]*\n([\s\S]*?)(?=\n{2,}|$)/g, '<div class="important">$1</div>\n');
+
+      return markdown;
+    }
+
+    function escapeHtml(unsafe) {
+      return unsafe.replace(/[&<>"']/g, m => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[m]));
+    }
+
     function router() {
-      const hash = window.location.hash.slice(2);
+      // CORREÇÃO: Decodifica o hash para lidar com espaços (%20) e outros caracteres
+      const hash = decodeURIComponent(window.location.hash.slice(2));
       
       if (hash === "") {
         listFiles("");
         return;
       }
 
-      // Encontra o item no nosso mapa local
       const item = repoManifest.find(i => i.path === hash);
 
       if (item) {
@@ -122,34 +177,29 @@
           viewFile(hash);
         }
       } else {
-        // Se não encontrar, volta para a raiz
         listFiles("");
       }
     }
     
-    // MUDANÇA CRUCIAL: Função de inicialização que carrega o manifesto
     async function init() {
-        try {
-            const response = await fetch('manifest.json');
-            repoManifest = await response.json();
-            // Ordena para que as pastas apareçam antes dos arquivos
-            repoManifest.sort((a, b) => {
-                if (a.type === 'dir' && b.type === 'file') return -1;
-                if (a.type === 'file' && b.type === 'dir') return 1;
-                return a.path.localeCompare(b.path);
-            });
+      try {
+        const response = await fetch('manifest.json');
+        repoManifest = await response.json();
+        repoManifest.sort((a, b) => {
+          if (a.type === 'dir' && b.type === 'file') return -1;
+          if (a.type === 'file' && b.type === 'dir') return 1;
+          return a.path.localeCompare(b.path);
+        });
             
-            window.addEventListener("hashchange", router);
-            router(); // Inicia o roteador depois que o manifesto foi carregado
-        } catch (error) {
-            document.body.innerHTML = '<h1>Erro</h1><p>Não foi possível carregar o arquivo <code>manifest.json</code>. Certifique-se de que ele foi gerado e está na raiz do projeto.</p>';
-            console.error(error);
-        }
+        window.addEventListener("hashchange", router);
+        router();
+      } catch (error) {
+        document.body.innerHTML = '<h1>Erro</h1><p>Não foi possível carregar o arquivo <code>manifest.json</code>. Certifique-se de que ele foi gerado e está na raiz do projeto.</p>';
+        console.error(error);
+      }
     }
     
-    // Inicia a aplicação
     init();
-
   </script>
 </body>
 </html>

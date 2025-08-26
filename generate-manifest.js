@@ -8,6 +8,7 @@ const outputFile = 'manifest.json';
 // Lista de arquivos e pastas a serem ignorados
 const ignoreList = [
   '.git',
+  '.github', // Adicionado para ignorar a pasta do Actions
   'node_modules',
   'manifest.json',       // Ignora o próprio arquivo de manifesto
   'generate-manifest.js', // Ignora este script
@@ -25,7 +26,8 @@ function walk(dir, filelist = []) {
     }
 
     const stats = fs.statSync(filepath);
-    const relativePath = path.relative(rootDir, filepath).replace(/\\/g, '/'); // Normaliza para usar barras '/'
+    // Normaliza para usar barras '/'
+    const relativePath = path.relative(rootDir, filepath).replace(/\\/g, '/'); 
 
     if (stats.isDirectory()) {
       filelist.push({ path: relativePath, type: 'dir' });
