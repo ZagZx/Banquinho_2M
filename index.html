@@ -1,205 +1,26 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
-  <title>Explorador de Arquivos – banquinho</title>
+
+  <title>Banquinho</title>
+
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <style>
-    /* Seu CSS continua o mesmo */
-    body { font-family: system-ui, sans-serif; background: #f5f7fa; padding: 30px 20px; line-height: 1.6; }
-    h1 { text-align: center; margin-bottom: 30px; color: #333; }
-    #viewer { background: white; max-width: 900px; margin: auto; padding: 25px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-    #file-list { list-style: none; padding: 0; max-width: 900px; margin: 30px auto; display: grid; gap: 10px; }
-    #file-list li a { display: block; padding: 12px 16px; background: white; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; font-weight: 500; color: #333; text-decoration: none; transition: all 0.2s ease; }
-    #file-list li a:hover { background: #007bff; color: white; border-color: #007bff; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
-    pre { overflow-x: auto; border-radius: 6px; padding: 12px; background: #f6f8fa; }
-    code { font-family: 'Courier New', monospace; font-size: 14px; }
-    .note, .warning, .tip, .important { padding: 1em 1em 1em 3.2em; border-radius: 5px; margin: 1.5em 0; white-space: pre-wrap; position: relative; font-size: 1rem; }
-    .note::before, .warning::before, .tip::before, .important::before { position: absolute; left: 1em; top: 1em; font-size: 1.2em; }
-    .note { background-color: #eaf4ff; border-left: 5px solid #1d7af3; }
-    .note::before { content: "ℹ️"; }
-    .important { background-color: #ffe6e6; border-left: 5px solid #d63333; }
-    .important::before { content: "❗"; }
-    .warning { background-color: #fff3cd; border-left: 5px solid #ffc107; }
-    .warning::before { content: "⚠️"; }
-    .tip { background-color: #d4edda; border-left: 5px solid #28a745; }
-    .tip::before { content: "💡"; }
-  </style>
+  <link rel="stylesheet" href="static/style/main.css">
+
 </head>
+
 <body>
-  <h1>Explorador de Arquivos – banquinho</h1>
+    <img src="imagens/banquinho.png" alt="logo" id="logo">
+
   <div id="viewer"></div>
   <ul id="file-list"></ul>
+  
+  <script src="static/script/main.js"></script>
 
-  <script>
-    let repoManifest = [];
-
-    function listFiles(path = "") {
-      const container = document.getElementById("file-list");
-      const viewer = document.getElementById("viewer");
-      container.innerHTML = "";
-      viewer.innerHTML = "";
-
-      if (path !== "") {
-        const upPath = path.split("/").slice(0, -1).join("/");
-        const li = document.createElement("li");
-        const a = document.createElement("a");
-        a.textContent = "⬅ Voltar";
-        // CORREÇÃO: Codifica o caminho para o link de "Voltar"
-        a.href = `#/${encodeURIComponent(upPath)}`;
-        li.appendChild(a);
-        container.appendChild(li);
-      }
-
-      const depth = path === "" ? 0 : path.split("/").length;
-      
-      const items = repoManifest.filter(item => {
-        if (path === "") {
-          return !item.path.includes("/");
-        }
-        return item.path.startsWith(path + "/") && item.path.split("/").length === depth + 1;
-      });
-
-      items.forEach(item => {
-        const li = document.createElement("li");
-        const a = document.createElement("a");
-        const itemName = item.path.split("/").pop();
-        a.textContent = item.type === "dir" ? "📁 " + itemName : "📄 " + itemName;
-        // CORREÇÃO: Codifica o caminho para o link do item
-        a.href = `#/${encodeURIComponent(item.path)}`;
-        li.appendChild(a);
-        container.appendChild(li);
-      });
-    }
-
-    async function viewFile(path) {
-      // CORREÇÃO: Codifica o caminho para a chamada fetch funcionar com espaços
-      const encodedPath = path.split('/').map(encodeURIComponent).join('/');
-      const response = await fetch(encodedPath);
-      const text = await response.text();
-
-      const viewer = document.getElementById("viewer");
-      const container = document.getElementById("file-list");
-      container.innerHTML = "";
-
-      const ext = path.split(".").pop().toLowerCase();
-
-      // CORREÇÃO: Verifica múltiplas extensões de texto e markdown
-      if (['md', 'markdown', 'txt'].includes(ext)) {
-        renderMarkdown(text, path);
-      } else {
-        renderCode(text, path, ext);
-      }
-    }
-    
-    // CORREÇÃO: Funções de renderização completas
-    function renderCode(text, path, ext) {
-      let lang = "";
-      if (["py"].includes(ext)) lang = "python";
-      else if (["js"].includes(ext)) lang = "javascript";
-      else if (["html", "htm"].includes(ext)) lang = "html";
-      else if (["css"].includes(ext)) lang = "css";
-      else lang = "plaintext";
-
-      const viewer = document.getElementById("viewer");
-      viewer.innerHTML = `<h2>${path}</h2><pre><code class="language-${lang}">${escapeHtml(text)}</code></pre>`;
-      hljs.highlightAll();
-    }
-
-    function renderMarkdown(markdown, path) {
-      markdown = tratarBlocosEspeciais(markdown);
-      const html = marked.parse(markdown, {
-        highlight: function(code, lang) {
-          const validLang = hljs.getLanguage(lang) ? lang : 'plaintext';
-          return hljs.highlight(code, { language: validLang }).value;
-        }
-      });
-
-      const viewer = document.getElementById("viewer");
-      viewer.innerHTML = `<h2>${path}</h2>${html}`;
-
-      // Adiciona títulos aos blocos especiais
-      document.querySelectorAll('.note').forEach(el => {
-        el.insertAdjacentHTML('afterbegin', '<strong style="display:block; margin-bottom:0.5em;">Nota</strong>');
-      });
-      document.querySelectorAll('.important').forEach(el => {
-        el.insertAdjacentHTML('afterbegin', '<strong style="display:block; margin-bottom:0.5em;">Importante</strong>');
-      });
-      document.querySelectorAll('.tip').forEach(el => {
-        el.insertAdjacentHTML('afterbegin', '<strong style="display:block; margin-bottom:0.5em;">Dica</strong>');
-      });
-      document.querySelectorAll('.warning').forEach(el => {
-        el.insertAdjacentHTML('afterbegin', '<strong style="display:block; margin-bottom:0.5em;">Atenção</strong>');
-      });
-    }
-
-    function tratarBlocosEspeciais(markdown) {
-      markdown = markdown.replace(/^\[!NOTE\][ \t]*(.+)$/gm, '<div class="note">$1</div>');
-      markdown = markdown.replace(/^\[!TIP\][ \t]*(.+)$/gm, '<div class="tip">$1</div>');
-      markdown = markdown.replace(/^\[!WARNING\][ \t]*(.+)$/gm, '<div class="warning">$1</div>');
-      markdown = markdown.replace(/^\[!IMPORTANT\][ \t]*(.+)$/gm, '<div class="important">$1</div>');
-
-      markdown = markdown.replace(/\[!NOTE\][ \t]*\n([\s\S]*?)(?=\n{2,}|$)/g, '<div class="note">$1</div>\n');
-      markdown = markdown.replace(/\[!TIP\][ \t]*\n([\s\S]*?)(?=\n{2,}|$)/g, '<div class="tip">$1</div>\n');
-      markdown = markdown.replace(/\[!WARNING\][ \t]*\n([\s\S]*?)(?=\n{2,}|$)/g, '<div class="warning">$1</div>\n');
-      markdown = markdown.replace(/\[!IMPORTANT\][ \t]*\n([\s\S]*?)(?=\n{2,}|$)/g, '<div class="important">$1</div>\n');
-
-      return markdown;
-    }
-
-    function escapeHtml(unsafe) {
-      return unsafe.replace(/[&<>"']/g, m => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-      }[m]));
-    }
-
-    function router() {
-      // CORREÇÃO: Decodifica o hash para lidar com espaços (%20) e outros caracteres
-      const hash = decodeURIComponent(window.location.hash.slice(2));
-      
-      if (hash === "") {
-        listFiles("");
-        return;
-      }
-
-      const item = repoManifest.find(i => i.path === hash);
-
-      if (item) {
-        if (item.type === 'dir') {
-          listFiles(hash);
-        } else {
-          viewFile(hash);
-        }
-      } else {
-        listFiles("");
-      }
-    }
-    
-    async function init() {
-      try {
-        const response = await fetch('manifest.json');
-        repoManifest = await response.json();
-        repoManifest.sort((a, b) => {
-          if (a.type === 'dir' && b.type === 'file') return -1;
-          if (a.type === 'file' && b.type === 'dir') return 1;
-          return a.path.localeCompare(b.path);
-        });
-            
-        window.addEventListener("hashchange", router);
-        router();
-      } catch (error) {
-        document.body.innerHTML = '<h1>Erro</h1><p>Não foi possível carregar o arquivo <code>manifest.json</code>. Certifique-se de que ele foi gerado e está na raiz do projeto.</p>';
-        console.error(error);
-      }
-    }
-    
-    init();
-  </script>
 </body>
 </html>

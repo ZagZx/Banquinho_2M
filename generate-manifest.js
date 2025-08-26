@@ -1,9 +1,8 @@
-// generate-manifest.js
-const fs = require('fs');
-const path = require('path');
+const fs = require('fs')
+const path = require('path')
 
-const rootDir = '.'; // Começa do diretório atual
-const outputFile = 'manifest.json';
+const rootDir = '.' // Começa do diretório atual
+const outputFile = 'manifest.json'
 
 // Lista de arquivos e pastas a serem ignorados
 const ignoreList = [
@@ -13,34 +12,34 @@ const ignoreList = [
   'manifest.json',       // Ignora o próprio arquivo de manifesto
   'generate-manifest.js', // Ignora este script
   'index.html'           // Ignora o explorador
-];
+]
 
 function walk(dir, filelist = []) {
-  const files = fs.readdirSync(dir);
+  const files = fs.readdirSync(dir)
 
   files.forEach(file => {
-    const filepath = path.join(dir, file);
+    const filepath = path.join(dir, file)
     
     if (ignoreList.includes(file)) {
-      return; // Pula o item se estiver na lista de ignorados
+      return // pula o item se estiver na lista de ignorados
     }
 
-    const stats = fs.statSync(filepath);
-    // Normaliza para usar barras '/'
-    const relativePath = path.relative(rootDir, filepath).replace(/\\/g, '/'); 
+    const stats = fs.statSync(filepath)
+    // normaliza para usar barras '/'
+    const relativePath = path.relative(rootDir, filepath).replace(/\\/g, '/') 
 
     if (stats.isDirectory()) {
-      filelist.push({ path: relativePath, type: 'dir' });
-      walk(filepath, filelist);
+      filelist.push({ path: relativePath, type: 'dir' })
+      walk(filepath, filelist)
     } else {
-      filelist.push({ path: relativePath, type: 'file' });
+      filelist.push({ path: relativePath, type: 'file' })
     }
-  });
+  })
 
-  return filelist;
+  return filelist
 }
 
-const fileManifest = walk(rootDir);
-fs.writeFileSync(outputFile, JSON.stringify(fileManifest, null, 2));
+const fileManifest = walk(rootDir)
+fs.writeFileSync(outputFile, JSON.stringify(fileManifest, null, 2))
 
-console.log(`Manifesto gerado com sucesso em "${outputFile}" com ${fileManifest.length} itens.`);
+console.log(`Manifesto gerado com sucesso em "${outputFile}" com ${fileManifest.length} itens.`)
