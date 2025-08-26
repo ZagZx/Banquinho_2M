@@ -116,7 +116,7 @@ function renderMarkdown(markdown, path) {
         ${renderBackButton(path)}
         ${html}
     `;
-
+    // teste
     // Adiciona títulos aos blocos especiais
     document.querySelectorAll('.note').forEach(el => {
         el.insertAdjacentHTML('afterbegin', '<strong style="display:block; margin-bottom:0.5em">Nota</strong>');
