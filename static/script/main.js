@@ -1,38 +1,42 @@
-let repoManifest = [];
+let repoManifest = []
+// A variavel repoManifest é uma lista de caminhos dos arquivos e diretorios do banquinho seus respectivos tipos (dir ou file)
 
-// Listagem das files
+
+// Listagem dos arquivos
 function listFiles(path = "") {
-    const container = document.getElementById("file-list");
-    const viewer = document.getElementById("viewer");
-    container.innerHTML = "";
+    const container = document.getElementById("file-list") // html que vai listar as representações dos arquivos e diretorios
+    const viewer = document.getElementById("viewer") // Container onde vai ser renderizado os conteúdos dos arquivos
+    container.innerHTML = "" // Serve para "limpar" a listagem anterior
 
-    viewer.innerHTML = path
-        ? `<h2>${path}</h2>`
-        : "<h2>Bem vindo ao site do Banquinho</h2>";
+    viewer.innerHTML = path ? `<h2>${path}</h2>` : "<h2>Bem vindo ao site do Banquinho</h2>" // Se não for a página inicial vai mostrar o caminho que o usuário está
 
     // Botão de voltar
-    if (path !== "") {
-        const upPath = path.split("/").slice(0, -1).join("/");
-        const li = document.createElement("li");
-        const a = document.createElement("a");
-        a.textContent = "📁 ..";
-        a.href = `#/${encodeURIComponent(upPath)}`;
+    if (path !== ""){ // Só pode voltar se não estiver dentro de alguma pasta ou arquivo
+        const upPath = path.split("/").slice(0, -1).join("/") // Esse código vai "quebrar" em uma array apenas com os nomes do caminho e sem as / depois vai excluir a ultima e vai juntar todos com / entre eles
+        const li = document.createElement("li")
+        const a = document.createElement("a")
+        a.textContent = "📁 .."
+        a.href = `#/${encodeURIComponent(upPath)}` // Meio que "traduz" o upPath com / pra um código que funciona na url (ja que não são pastas criadas de verdade e sim infos num arquivo json)
         li.appendChild(a);
         container.appendChild(li);
     }
 
-    const depth = path === "" ? 0 : path.split("/").length;
+    const depth = path === "" ? 0 : path.split("/").length // Aqui ele checa a profundidade do caminho, a home é profundidade 0 por exemplo e psi/ é profundidade 1
 
-    const items = repoManifest.filter(item => {
-        if (path === "") return !item.path.includes("/");
-        return item.path.startsWith(path + "/") && item.path.split("/").length === depth + 1;
+    const displayItems = repoManifest.filter(item => { // "displayItems" são os diretorios e os arquivos que devem ser mostrados na tela dado um certo path
+        if (depth === 0){ // Se path === "" ou seja, está na raiz
+            return !item.path.includes("/") && item.path !== "static" // retorna todos os itens que estão na raiz e que não é o "static"
+        }
+        return item.path.startsWith(path + "/") && item.path.split("/").length === depth + 1 // Se o usuário não estiver na raiz (depth > 0) 
+        // então ele checar todos os items dentro da dir atual e checa se esses itens estão apenas 1 nivel abaixo, exemplo:
+        // se o usuário estiver na pasta PSI, vai mostrar só a pasta flask e não vai mostrar o que tem dentro de flask sem abrir a pasta flask
     });
-
-    items.forEach(item => {
-        const li = document.createElement("li");
-        const a = document.createElement("a");
-        const itemName = item.path.split("/").pop();
-        a.textContent = item.type === "dir" ? "📁 " + itemName : "📄 " + itemName;
+    
+    displayItems.forEach(item => { // Gera a parte do html dos items 
+        const li = document.createElement("li")
+        const a = document.createElement("a")
+        const itemName = item.path.split("/").pop()
+        a.textContent = item.type === "dir" ? "📁 " + itemName : "📄 " + itemName
         a.href = `#/${encodeURIComponent(item.path)}`;
         li.appendChild(a);
         container.appendChild(li);
@@ -45,25 +49,26 @@ async function viewFile(path) {
     const container = document.getElementById("file-list");
     container.innerHTML = "";
 
-    const ext = path.split(".").pop().toLowerCase();
-    const imageExtensions = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'bmp'];
+    const ext = path.split(".").pop().toLowerCase()
+    const imageExtensions = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'bmp']
 
-    if (imageExtensions.includes(ext)) {
-        renderImage(path);
+    if (imageExtensions.includes(ext)) { // Renderizar imagens no site
+        renderImage(path)
     } else {
         const encodedPath = path.split('/').map(encodeURIComponent).join('/');
         const response = await fetch(encodedPath);
         const text = await response.text();
 
         if (['md', 'markdown', 'txt'].includes(ext)) {
-            renderMarkdown(text, path);
+            renderMarkdown(text, path)
         } else {
-            renderCode(text, path, ext);
+            renderCode(text, path, ext)
         }
     }
+    
 }
 
-// 🔹 Função utilitária pra criar botão voltar
+// Função pra criar botão voltar
 function renderBackButton(path) {
     const upPath = path.split("/").slice(0, -1).join("/");
     return `<a href="#/${encodeURIComponent(upPath)}" 
@@ -83,7 +88,7 @@ function renderImage(path) {
 }
 
 // Renderização do código
-function renderCode(text, path, ext) {
+function renderCode(text, path, ext) { // Tem um bug e acho que é aqui
     let lang = "plaintext";
     if (["py"].includes(ext)) lang = "python";
     else if (["js"].includes(ext)) lang = "javascript";
@@ -101,6 +106,7 @@ function renderCode(text, path, ext) {
 }
 
 // Renderização do markdown
+// Aqui tenho que admitir que foi o chat que fez porque não entendi nada dessa parte
 function renderMarkdown(markdown, path) {
     markdown = tratarBlocosEspeciais(markdown);
     const html = marked.parse(markdown, {
@@ -116,7 +122,6 @@ function renderMarkdown(markdown, path) {
         ${renderBackButton(path)}
         ${html}
     `;
-    // teste
     // Adiciona títulos aos blocos especiais
     document.querySelectorAll('.note').forEach(el => {
         el.insertAdjacentHTML('afterbegin', '<strong style="display:block; margin-bottom:0.5em">Nota</strong>');
@@ -131,7 +136,6 @@ function renderMarkdown(markdown, path) {
         el.insertAdjacentHTML('afterbegin', '<strong style="display:block; margin-bottom:0.5em">Atenção</strong>');
     });
 }
-
 
 // Tratamento de blocos especiais em Markdown 
 function tratarBlocosEspeciais(markdown) {
@@ -153,21 +157,21 @@ function tratarBlocosEspeciais(markdown) {
 }
 
 
-function router() {
+function router() { //Modifica a url do site pra funcionar bonitinho
     const hash = decodeURIComponent(window.location.hash.slice(2));
 
     if (hash === "") {
-        listFiles("");
-        return;
+        listFiles("")
+        return
     }
 
-    const item = repoManifest.find(i => i.path === hash);
+    const item = repoManifest.find(i => i.path === hash)
 
     if (item) {
-        if (item.type === 'dir') listFiles(hash);
-        else viewFile(hash);
+        if (item.type === 'dir') listFiles(hash)
+        else viewFile(hash)
     } else {
-        listFiles("");
+        listFiles("")
     }
 }
 
@@ -179,6 +183,7 @@ function escapeHtml(unsafe) {
          .replace(/"/g, "&quot;")
          .replace(/'/g, "&#039;");
 } // Pedi pro chat fazer um estilo melhor e ele disse pra colocar isso no código (não faço ideia doq isso faz)
+
 
 async function init() {
     try {
