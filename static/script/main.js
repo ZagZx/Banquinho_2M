@@ -20,7 +20,6 @@ function listFiles(path = "") {
         li.appendChild(a);
         container.appendChild(li);
     }
-
     const depth = path === "" ? 0 : path.split("/").length // Aqui ele checa a profundidade do caminho, a home é profundidade 0 por exemplo e psi/ é profundidade 1
 
     const displayItems = repoManifest.filter(item => { // "displayItems" são os diretorios e os arquivos que devem ser mostrados na tela dado um certo path
@@ -152,8 +151,8 @@ function router() { //Modifica a url do site pra funcionar bonitinho
     const item = repoManifest.find(i => i.path === hash);
 
     if (item) {
-        if (item.type === 'dir') listFiles(hash);
-        else viewFile(hash);
+        if (item.type === 'file') viewFile(hash);
+        listFiles(hash)
     } else {
         listFiles("");
     }
