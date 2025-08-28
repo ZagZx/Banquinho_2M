@@ -5,13 +5,13 @@ let repoManifest = []
 // Listagem dos arquivos
 function listFiles(path = "") {
     const container = document.getElementById("file-list") // html que vai listar as representações dos arquivos e diretorios
-    const viewer = document.getElementById("viewer") // Container onde vai ser renderizado os conteúdos dos arquivos
+    const pathViewer = document.getElementById("path") // Container onde vai ser renderizado os conteúdos dos arquivos
     container.innerHTML = "" // Serve para "limpar" a listagem anterior
 
-    viewer.innerHTML = path ? `<h2>${path}</h2>` : "<h2>Bem vindo ao site do Banquinho</h2>" // Se não for a página inicial vai mostrar o caminho que o usuário está
+    pathViewer.innerHTML = `<h2>${path || '/'}</h2>` // Se não for a página inicial vai mostrar o caminho que o usuário está
 
     // Botão de voltar
-    if (path !== ""){ // Só pode voltar se não estiver dentro de alguma pasta ou arquivo
+    if (path !== "") { // Só pode voltar se não estiver dentro de alguma pasta ou arquivo
         const upPath = path.split("/").slice(0, -1).join("/") // Esse código vai "quebrar" em uma array apenas com os nomes do caminho e sem as / depois vai excluir a ultima e vai juntar todos com / entre eles
         const li = document.createElement("li")
         const a = document.createElement("a")
@@ -24,14 +24,14 @@ function listFiles(path = "") {
     const depth = path === "" ? 0 : path.split("/").length // Aqui ele checa a profundidade do caminho, a home é profundidade 0 por exemplo e psi/ é profundidade 1
 
     const displayItems = repoManifest.filter(item => { // "displayItems" são os diretorios e os arquivos que devem ser mostrados na tela dado um certo path
-        if (depth === 0){ // Se path === "" ou seja, está na raiz
+        if (depth === 0) { // Se path === "" ou seja, está na raiz
             return !item.path.includes("/") && item.path !== "static" // retorna todos os itens que estão na raiz e que não é o "static"
         }
         return item.path.startsWith(path + "/") && item.path.split("/").length === depth + 1 // Se o usuário não estiver na raiz (depth > 0) 
         // então ele checar todos os items dentro da dir atual e checa se esses itens estão apenas 1 nivel abaixo, exemplo:
         // se o usuário estiver na pasta PSI, vai mostrar só a pasta flask e não vai mostrar o que tem dentro de flask sem abrir a pasta flask
     });
-    
+
     displayItems.forEach(item => { // Gera a parte do html dos items 
         const li = document.createElement("li")
         const a = document.createElement("a")
@@ -45,10 +45,6 @@ function listFiles(path = "") {
 
 // Visualização de arquivos
 async function viewFile(path) {
-    const viewer = document.getElementById("viewer");
-    const container = document.getElementById("file-list");
-    container.innerHTML = "";
-
     const ext = path.split(".").pop().toLowerCase()
     const imageExtensions = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'bmp']
 
@@ -60,35 +56,23 @@ async function viewFile(path) {
         const text = await response.text();
 
         if (['md', 'markdown', 'txt'].includes(ext)) {
-            renderMarkdown(text, path)
+            renderMarkdown(text);
         } else {
-            renderCode(text, path, ext)
+            renderCode(text, ext);
         }
     }
-    
-}
-
-// Função pra criar botão voltar
-function renderBackButton(path) {
-    const upPath = path.split("/").slice(0, -1).join("/");
-    return `<a href="#/${encodeURIComponent(upPath)}" 
-        style="display:inline-block; margin-bottom:15px; 
-        text-decoration:none; background:#f0f0f0; 
-        padding:6px 12px; border-radius:6px;">📁 ..</a>`;
 }
 
 // Renderização de imagens
 function renderImage(path) {
     const viewer = document.getElementById("viewer");
     viewer.innerHTML = `
-        <h2>${path}</h2>
-        ${renderBackButton(path)}
         <img src="${path}" alt="${path}">
     `;
 }
 
 // Renderização do código
-function renderCode(text, path, ext) { // Tem um bug e acho que é aqui
+function renderCode(text, ext) { // Tem um bug e acho que é aqui
     let lang = "plaintext";
     if (["py"].includes(ext)) lang = "python";
     else if (["js"].includes(ext)) lang = "javascript";
@@ -96,9 +80,10 @@ function renderCode(text, path, ext) { // Tem um bug e acho que é aqui
     else if (["css"].includes(ext)) lang = "css";
 
     const viewer = document.getElementById("viewer");
+    // viewer.innerHTML = `
+    //     <pre><code class="language-${lang}">${escapeHtml(text)}</code></pre>
+    // `;
     viewer.innerHTML = `
-        <h2>${path}</h2>
-        ${renderBackButton(path)}
         <pre><code class="language-${lang}">${escapeHtml(text)}</code></pre>
     `;
 
@@ -107,7 +92,7 @@ function renderCode(text, path, ext) { // Tem um bug e acho que é aqui
 
 // Renderização do markdown
 // Aqui tenho que admitir que foi o chat que fez porque não entendi nada dessa parte
-function renderMarkdown(markdown, path) {
+function renderMarkdown(markdown) {
     markdown = tratarBlocosEspeciais(markdown);
     const html = marked.parse(markdown, {
         highlight: (code, lang) => {
@@ -117,11 +102,7 @@ function renderMarkdown(markdown, path) {
     });
 
     const viewer = document.getElementById("viewer");
-    viewer.innerHTML = `
-        <h2>${path}</h2>
-        ${renderBackButton(path)}
-        ${html}
-    `;
+    viewer.innerHTML = html;
     // Adiciona títulos aos blocos especiais
     document.querySelectorAll('.note').forEach(el => {
         el.insertAdjacentHTML('afterbegin', '<strong style="display:block; margin-bottom:0.5em">Nota</strong>');
@@ -147,10 +128,16 @@ function tratarBlocosEspeciais(markdown) {
     ];
 
     patterns.forEach(p => {
-        const inlineRegex = new RegExp(`^\\[!${p.tag}\\][ \\t]*(.+)$`, 'gm');
-        const blockRegex = new RegExp(`\\[!${p.tag}\\][ \\t]*\\n([\\s\\S]*?)(?=\\n{2,}|$)`, 'g');
-        markdown = markdown.replace(inlineRegex, `<div class="${p.className}">$1</div>`);
-        markdown = markdown.replace(blockRegex, `<div class="${p.className}">$1</div>\n`);
+        const blockRegex = new RegExp(`\\>\\s?\\n?\\[!${p.tag}\\]\\r\\n\\>\\s?[\\w\\W][^\\r]+`, 'gm');
+        let [, blockRegexText] = markdown.match(new RegExp(`\\>\\s?\\n?\\[!${p.tag}\\]\\r\\n\\>\\s?([\\w\\W][^\\r]+)`, 'm')) || [];
+        // Transformar o markdown dentro da nota para HTML
+        blockRegexText &&= marked.parse(blockRegexText, { // &&= serve para usar apenas se não for undefined ou null
+            highlight: (code, lang) => {
+                const validLang = hljs.getLanguage(lang) ? lang : 'plaintext';
+                return hljs.highlight(code, { language: validLang }).value;
+            }
+        });
+        markdown = markdown.replace(blockRegex, `<div class="${p.className}">${blockRegexText}</div>\n`);
     });
 
     return markdown;
@@ -160,30 +147,26 @@ function tratarBlocosEspeciais(markdown) {
 function router() { //Modifica a url do site pra funcionar bonitinho
     const hash = decodeURIComponent(window.location.hash.slice(2));
 
-    if (hash === "") {
-        listFiles("")
-        return
-    }
+    if (hash === '') viewFile('README.md');
 
-    const item = repoManifest.find(i => i.path === hash)
+    const item = repoManifest.find(i => i.path === hash);
 
     if (item) {
-        if (item.type === 'dir') listFiles(hash)
-        else viewFile(hash)
+        if (item.type === 'dir') listFiles(hash);
+        else viewFile(hash);
     } else {
-        listFiles("")
+        listFiles("");
     }
 }
 
 function escapeHtml(unsafe) {
     return unsafe
-         .replace(/&/g, "&amp;")
-         .replace(/</g, "&lt;")
-         .replace(/>/g, "&gt;")
-         .replace(/"/g, "&quot;")
-         .replace(/'/g, "&#039;");
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 } // Pedi pro chat fazer um estilo melhor e ele disse pra colocar isso no código (não faço ideia doq isso faz)
-
 
 async function init() {
     try {
