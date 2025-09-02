@@ -4,6 +4,9 @@
     display: block;
     margin: 20px auto;
     border-radius: 8px;
+    max-width: 100%;
+    height: auto;
+    display: block;
 }
 
 #viewer a {
@@ -59,6 +62,9 @@ ol>li {
     padding: 15px;
     border-radius: 6px;
     background-color: var(--color6);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-x: auto; 
 }
 
 #viewer code {
@@ -77,6 +83,13 @@ pre code.hljs {
 
 code.hljs {
     padding: 3px 5px
+}
+/* Evita que qualquer conteúdo maior que a tela force overflow */
+#viewer {
+    max-width: 100%;
+    overflow-x: auto;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 /* Roubei... */
