@@ -8,6 +8,7 @@ flash('[Mensagem para o usuário]', category='[error/success]')
 No HTML, ele pode ser inserido com:
 
 ```html
+{%raw%}
 {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
         {% for category, message in messages %}
@@ -17,5 +18,6 @@ No HTML, ele pode ser inserido com:
         {% endfor %}
     {% endif %}
 {% endwith %}
+{%endraw%}
 ```
 ps.: Não precisa de alteração.
