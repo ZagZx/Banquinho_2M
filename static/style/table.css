@@ -1,0 +1,18 @@
+table {
+    /* min-width: 40rem; */
+    border-collapse: collapse;
+    margin-block: 1rem;
+}
+
+table thead {
+    background-color: var(--color3);
+}
+
+table th, td {
+    padding: .25rem .5rem;
+    border: 2px solid var(--color3);
+}
+
+table tbody > tr:nth-child(2n) {
+    background-color: var(--color6);
+}

@@ -1,0 +1,49 @@
+.note,
+.warning,
+.tip,
+.important {
+    padding: 1em 1rem 0 3.2rem;
+    border-radius: 5px;
+    margin-block: 1.5em;
+    white-space: pre-wrap;
+    position: relative;
+    font-size: 1rem;
+}
+
+.note::before,
+.warning::before,
+.tip::before,
+.important::before {
+    position: absolute;
+    left: 1em;
+    top: 0.7em;
+    font-size: 1.2em;
+}
+
+.note {
+    border-left: 5px solid #1d7af3;
+}
+.note::before {
+    content: "ℹ️";
+}
+
+.important {
+    border-left: 5px solid #d63333;
+}
+.important::before {
+    content: "❗";
+}
+
+.warning {
+    border-left: 5px solid #ffc107;
+}
+.warning::before {
+    content: "⚠️";
+}
+
+.tip {
+    border-left: 5px solid #28a745;
+}
+.tip::before {
+    content: "💡";
+}
