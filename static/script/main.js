@@ -10,15 +10,22 @@ function listFiles(path = "") {
 
     pathViewer.innerHTML = `<h2>${path || '/'}</h2>` // Se não for a página inicial vai mostrar o caminho que o usuário está
 
-    // Botão de voltar
+    // Botão de voltar para pasta anterior e voltar para pasta raiz
     if (path !== "") { // Só pode voltar se não estiver dentro de alguma pasta ou arquivo
-        const upPath = path.split("/").slice(0, -1).join("/") // Esse código vai "quebrar" em uma array apenas com os nomes do caminho e sem as / depois vai excluir a ultima e vai juntar todos com / entre eles
-        const li = document.createElement("li")
-        const a = document.createElement("a")
-        a.textContent = "📁 .."
-        a.href = `#/${encodeURIComponent(upPath)}` // Meio que "traduz" o upPath com / pra um código que funciona na url (ja que não são pastas criadas de verdade e sim infos num arquivo json)
-        li.appendChild(a);
-        container.appendChild(li);
+        const liRoot = document.createElement("li");
+        const aRoot = document.createElement("a");
+        aRoot.textContent = "📁 /";
+        aRoot.href = "#/"; 
+        liRoot.appendChild(aRoot);
+        container.appendChild(liRoot);
+
+        const upPath = path.split("/").slice(0, -1).join("/"); // Esse código vai "quebrar" em uma array apenas com os nomes do caminho e sem as / depois vai excluir a ultima e vai juntar todos com / entre eles
+        const liBack = document.createElement("li");
+        const aBack = document.createElement("a");
+        aBack.textContent = "📁 ..";
+        aBack.href = `#/${encodeURIComponent(upPath)}`; // Meio que "traduz" o upPath com / pra um código que funciona na url (ja que não são pastas criadas de verdade e sim infos num arquivo json)
+        liBack.appendChild(aBack);
+        container.appendChild(liBack);
     }
     const depth = path === "" ? 0 : path.split("/").length // Aqui ele checa a profundidade do caminho, a home é profundidade 0 por exemplo e psi/ é profundidade 1
 
